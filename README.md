@@ -1,93 +1,94 @@
-# p5_rrvanga
+# Spark Loan Application Analysis 
 
-Project p5 of rrvanga
+This project analyzes Wisconsin loan application data using Apache Spark and Hive. It demonstrates loading large CSV datasets into Hive tables, transforming them with RDDs, DataFrames, and SQL, optimizing queries through bucketing and caching, and training a Decision Tree classifier to predict loan approval outcomes.
 
-## Getting started
+## 📚 Learning Objectives
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- Use Spark's RDD, DataFrame, and SQL interfaces to process data  
+- Load data into Hive and create warehouse tables/views  
+- Optimize queries with techniques like bucketing and caching  
+- Train and evaluate a Decision Tree model using PySpark MLlib  
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+---
 
-## Add your files
+## 🧱 Cluster Setup
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+This project runs on a Dockerized Spark + HDFS + Hive environment with the following containers:
 
+- `p5-nb`: JupyterLab notebook environment  
+- `p5-nn`: HDFS NameNode  
+- `p5-dn`: HDFS DataNode  
+- `p5-boss`: Spark Master  
+- `p5-worker`: Spark Workers (2 containers)
+
+### Build Docker Images
+
+  ```bash
+  docker build . -f p5-base.Dockerfile -t p5-base
+  docker build . -f notebook.Dockerfile -t p5-nb
+  docker build . -f namenode.Dockerfile -t p5-nn
+  docker build . -f datanode.Dockerfile -t p5-dn
+  docker build . -f boss.Dockerfile -t p5-boss
+  docker build . -f worker.Dockerfile -t p5-worker
+  docker compose up -d
 ```
-cd existing_repo
-git remote add origin https://git.doit.wisc.edu/cdis/cs/courses/cs544/f24/p5/p5_rrvanga.git
-git branch -M main
-git push -uf origin main
-```
+## 📁 Files and Structure
 
-## Integrate with your tools
+1. **Clone and Build Docker Images**
 
-- [ ] [Set up project integrations](https://git.doit.wisc.edu/cdis/cs/courses/cs544/f24/p5/p5_rrvanga/-/settings/integrations)
+- p5.ipynb: The main notebook containing all analysis and answers to Q1–Q10
 
-## Collaborate with your team
+- docker-compose.yml: Cluster configuration
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+- p5-base.Dockerfile, notebook.Dockerfile, namenode.Dockerfile, datanode.Dockerfile, boss.Dockerfile, worker.Dockerfile: Docker images
 
-## Test and Deploy
+- nb/data/: Contains unzipped CSV files used in analysis
 
-Use the built-in continuous integration in GitLab.
+- .gitignore: To exclude large datasets from version control
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## 💻 Jupyter Notebook Tasks
 
-***
+All answers are recorded in `p5.ipynb` with corresponding question headers as comments (e.g., `#q1`, `#q2`, ...).
 
-# Editing this README
+### Questions
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+#### Part 1: Spark Interfaces
 
-## Suggestions for a good README
+**Q1**: How many banks start with "The"? (RDD)  
+**Q2**: How many banks start with "The"? (DataFrame)  
+**Q3**: How many banks start with "The"? (Spark SQL)
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+#### Part 2: Hive Tables & Joins
 
-## Name
-Choose a self-explaining name for your project.
+**Q4**: What tables exist in the warehouse?  
+**Q5**: How many loan applications did "University of Wisconsin Credit Union" receive?  
+**Q6**: What does `.explain("formatted")` show for Q5?
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+#### Part 3: Grouping Rows
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+**Q7**: Average interest rates for top 10 counties where Wells Fargo receives most applications  
+**Q8**: When does grouping require network I/O between partial and full aggregation?
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+#### Part 4: Machine Learning
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+**Q9**: Train 5 Decision Trees with increasing depth; report accuracy  
+**Q10**: Does increasing depth always improve accuracy? Why or why not?
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+---
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+## 🛠️ Technologies Used
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+- Apache Spark (RDDs, DataFrames, SQL, MLlib)  
+- Apache Hive  
+- HDFS  
+- Docker & Docker Compose  
+- JupyterLab  
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+---
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+## ⚠️ Notes
+  
+- Data loaded to Hive tables using `.write.saveAsTable()` with bucketing on `county_code`  
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
 
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
